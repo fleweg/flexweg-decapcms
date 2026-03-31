@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/assets/css/theme.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <meta name="description" content="Personal website and blog">
+  <meta name="author" content="Frederic Leaux">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Leaux.ovh">
+  <meta property="og:description" content="Personal website and blog">
+  <meta property="og:url" content="https://leaux.ovh/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://leaux.ovh/assets/img/default-og.jpg">
+
+  <title>Leaux.ovh</title>
+</head>
+<body>
+  <!-- SVG Icons for theme switcher -->
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+    <symbol id="check2" viewBox="0 0 16 16">
+      <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+    </symbol>
+    <symbol id="circle-half" viewBox="0 0 16 16">
+      <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>
+    </symbol>
+    <symbol id="moon-stars-fill" viewBox="0 0 16 16">
+      <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+      <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/>
+    </symbol>
+    <symbol id="sun-fill" viewBox="0 0 16 16">
+      <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+    </symbol>
+  </svg>
+
+  <!-- Header -->
+  <header class="site-header">
+    <nav class="navbar navbar-light">
+      <div class="container">
+        <a class="navbar-brand" href="/">
+          Leaux.ovh
+        </a>
+  
+        <!-- Burger Menu Button -->
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+  
+  <!-- Offcanvas Menu -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Leaux.ovh</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+        <li class="nav-item">
+          <a class="nav-link active" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/articles/">Articles</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="/about.html">About</a>
+        </li>
+        <li class="nav-item mt-3">
+          <hr class="dropdown-divider">
+        </li>
+        <li class="nav-item">
+          <p class="nav-link fw-bold mb-2">Theme</p>
+          <div class="d-flex flex-column gap-2">
+            <button type="button" class="btn btn-outline-secondary d-flex align-items-center justify-content-start" data-bs-theme-value="light" aria-pressed="false">
+              <svg class="bi me-2" width="1em" height="1em"><use href="#sun-fill"></use></svg>
+              Light
+              <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
+            </button>
+            <button type="button" class="btn btn-outline-secondary d-flex align-items-center justify-content-start" data-bs-theme-value="dark" aria-pressed="false">
+              <svg class="bi me-2" width="1em" height="1em"><use href="#moon-stars-fill"></use></svg>
+              Dark
+              <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
+            </button>
+            <button type="button" class="btn btn-outline-secondary d-flex align-items-center justify-content-start active" data-bs-theme-value="auto" aria-pressed="true">
+              <svg class="bi me-2" width="1em" height="1em"><use href="#circle-half"></use></svg>
+              Auto
+              <svg class="bi ms-auto d-none" width="1em" height="1em"><use href="#check2"></use></svg>
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="site-main">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <style>
+      /* Animated background blobs */
+      .hero-blobs {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        filter: blur(80px);
+        z-index: 1;
+        opacity: 0.5;
+        overflow: hidden;
+      }
+      
+      .hero-blob {
+        position: absolute;
+        border-radius: 50%;
+        will-change: transform;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+      }
+      
+      .hero-blob-1 {
+        width: 600px;
+        height: 600px;
+        background: #1d4ed8;
+        top: -100px;
+        left: -100px;
+        animation: blobMove1 15s infinite ease-in-out;
+      }
+      
+      .hero-blob-2 {
+        width: 500px;
+        height: 500px;
+        background: #6366f1;
+        bottom: -50px;
+        right: -50px;
+        animation: blobMove2 20s infinite ease-in-out;
+        animation-delay: -3s;
+      }
+      
+      .hero-blob-3 {
+        width: 400px;
+        height: 400px;
+        background: #9333ea;
+        top: 30%;
+        left: 25%;
+        animation: blobMove3 12s infinite ease-in-out;
+      }
+      
+      @keyframes blobMove1 {
+        0%, 100% {
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+        25% {
+          transform: translate3d(80px, 80px, 0) scale(1.05);
+        }
+        50% {
+          transform: translate3d(150px, 150px, 0) scale(1.1);
+        }
+        75% {
+          transform: translate3d(80px, 80px, 0) scale(1.05);
+        }
+      }
+      
+      @keyframes blobMove2 {
+        0%, 100% {
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+        25% {
+          transform: translate3d(-50px, -50px, 0) scale(1.08);
+        }
+        50% {
+          transform: translate3d(-100px, -100px, 0) scale(1.15);
+        }
+        75% {
+          transform: translate3d(-50px, -50px, 0) scale(1.08);
+        }
+      }
+      
+      @keyframes blobMove3 {
+        0%, 100% {
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+        25% {
+          transform: translate3d(50px, -50px, 0) scale(1.04);
+        }
+        50% {
+          transform: translate3d(100px, -100px, 0) scale(1.08);
+        }
+        75% {
+          transform: translate3d(50px, -50px, 0) scale(1.04);
+        }
+      }
+      
+      /* Same colors for both light and dark mode (dark background always) */
+      </style>
+      
+      <div class="hero-blobs">
+        <div class="hero-blob hero-blob-1"></div>
+        <div class="hero-blob hero-blob-2"></div>
+        <div class="hero-blob hero-blob-3"></div>
+      </div>
+      <div class="container">
+        <div class="row align-items-center min-vh-70">
+          <div class="col-lg-8 mx-auto text-center">
+            <h1 class="hero-title">Welcome to Leaux.ovh</h1>
+            <p class="hero-subtitle">Personal website and blog</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Latest Articles Section -->
+    <section class="articles-section">
+      <div class="container">
+        <div class="section-header text-center mb-5">
+          <h2 class="section-title">Latest Articles</h2>
+          <p class="section-subtitle">Discover our recent posts</p>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-md-6 col-lg-4">
+            <article class="article-card">
+              <div class="article-card-image">
+                <a href="/articles/mon-premier-article.html">
+                  <img src="/assets/img/crop_alf-medium.webp"
+                       srcset="/assets/img/crop_alf-small.webp 40w, /assets/img/crop_alf-medium.webp 300w, /assets/img/crop_alf-large.webp 1200w"
+                       sizes="(max-width: 768px) 100vw, 33vw"
+                       alt=""
+                       class="img-fluid"
+                       loading="lazy">
+                </a>
+              </div>
+              <div class="article-card-content">
+                <div class="article-tags mb-2">
+                  <span class="badge bg-light text-dark">Admin</span>
+                </div>
+                <h3 class="article-card-title">
+                  <a href="/articles/mon-premier-article.html">Mon premier article de test avecimage</a>
+                </h3>
+                <p class="article-card-excerpt">Ceci est un article de test realisé avec l&#x27;admib</p>
+                <div class="article-card-meta">
+                  <span class="article-date">28 mars 2026</span>
+                  <span class="article-author">by Frederic Leaux</span>
+                </div>
+                <a href="/articles/mon-premier-article.html" class="btn-read-more">Read more →</a>
+              </div>
+            </article>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <article class="article-card">
+              <div class="article-card-content">
+                <div class="article-tags mb-2">
+                  <span class="badge bg-light text-dark">announcement</span>
+                  <span class="badge bg-light text-dark">web</span>
+                </div>
+                <h3 class="article-card-title">
+                  <a href="/articles/welcome.html">Welcome to our new website</a>
+                </h3>
+                <p class="article-card-excerpt">Discover our new static site built with modern tools and an Apple-inspired design.</p>
+                <div class="article-card-meta">
+                  <span class="article-date">27 mars 2024</span>
+                  <span class="article-author">by Frederic Leaux</span>
+                </div>
+                <a href="/articles/welcome.html" class="btn-read-more">Read more →</a>
+              </div>
+            </article>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <article class="article-card">
+              <div class="article-card-content">
+                <div class="article-tags mb-2">
+                  <span class="badge bg-light text-dark">tutorial</span>
+                  <span class="badge bg-light text-dark">web</span>
+                  <span class="badge bg-light text-dark">development</span>
+                </div>
+                <h3 class="article-card-title">
+                  <a href="/articles/getting-started.html">Getting Started with Static Sites</a>
+                </h3>
+                <p class="article-card-excerpt">Learn the basics of static site generation and why it&#x27;s a great choice for modern websites.</p>
+                <div class="article-card-meta">
+                  <span class="article-date">26 mars 2024</span>
+                  <span class="article-author">by Frederic Leaux</span>
+                </div>
+                <a href="/articles/getting-started.html" class="btn-read-more">Read more →</a>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="text-center mt-5">
+          <a href="/articles/" class="btn btn-primary btn-lg">View all articles</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <p class="mb-0">© 2024 Frederic Leaux. All rights reserved.</p>
+        </div>
+        <div class="col-md-6">
+          <ul class="footer-links">
+            <li><a href="/privacy.html">Privacy</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Custom JS -->
+  <script src="/assets/js/main.js"></script>
+</body>
+</html>

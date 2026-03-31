@@ -1,0 +1,35 @@
+{
+  "header": {
+    "logo": {
+      "text": "Leaux.ovh",
+      "url": "/"
+    },
+    "links": [
+      {
+        "text": "Home",
+        "url": "/"
+      },
+      {
+        "text": "Articles",
+        "url": "/articles/"
+      },
+      {
+        "text": "About",
+        "url": "/about.html"
+      }
+    ]
+  },
+  "footer": {
+    "copyright": "© 2024 Frederic Leaux. All rights reserved.",
+    "links": [
+      {
+        "text": "Privacy",
+        "url": "/privacy.html"
+      },
+      {
+        "text": "Contact",
+        "url": "/contact.html"
+      }
+    ]
+  }
+}

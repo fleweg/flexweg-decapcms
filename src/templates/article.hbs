@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="{{site.language}}" data-bs-theme="light">
+<head>
+{{> meta-common}}
+  <meta name="description" content="{{article.description}}">
+  <meta name="author" content="{{#if article.author}}{{article.author}}{{else}}{{site.author}}{{/if}}">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{pageTitle}}">
+  <meta property="og:description" content="{{article.description}}">
+  <meta property="og:url" content="{{site.url}}{{currentUrl}}">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="{{site.url}}{{#if article.image}}{{article.image.large}}{{else}}{{site.defaultImage}}{{/if}}">
+
+  <title>{{pageTitle}}</title>
+</head>
+<body>
+  {{> theme-icons}}
+
+  {{> header}}
+
+  <!-- Main Content -->
+  <main class="site-main">
+    <!-- Article Header -->
+    <section class="article-header">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            {{#if article.tags}}
+            <div class="article-tags mb-3">
+              {{#each article.tags}}
+              <span class="badge bg-primary">{{this}}</span>
+              {{/each}}
+            </div>
+            {{/if}}
+
+            <h1 class="article-title">{{article.title}}</h1>
+
+            <div class="article-meta">
+              <span class="article-date">{{formatDate article.date}}</span>
+              {{#if article.author}}
+              <span class="article-author">by {{article.author}}</span>
+              {{/if}}
+            </div>
+
+            {{#if article.description}}
+            <p class="article-description">{{article.description}}</p>
+            {{/if}}
+          </div>
+        </div>
+
+        {{#if article.image}}
+        <div class="row mt-4">
+          <div class="col-lg-10 mx-auto">
+            <img src="{{article.image.medium}}"
+                 srcset="{{article.image.small}} 40w, {{article.image.medium}} 300w, {{article.image.large}} 1200w"
+                 sizes="(max-width: 768px) 100vw, 80vw"
+                 alt="{{article.image.alt}}"
+                 class="img-fluid article-featured-image"
+                 loading="lazy">
+          </div>
+        </div>
+        {{/if}}
+      </div>
+    </section>
+
+    <!-- Article Content -->
+    <section class="article-content">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <div class="prose">
+              {{{article.content}}}
+            </div>
+
+            <!-- Back to articles -->
+            <div class="article-footer mt-5 pt-4 border-top">
+              <a href="/articles/" class="btn btn-outline-primary">← Back to articles</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {{> footer}}
+
+  {{> scripts}}
+</body>
+</html>

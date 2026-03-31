@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="{{site.language}}" data-bs-theme="light">
+<head>
+{{> meta-common}}
+  <meta name="description" content="Page non trouvée - {{site.title}}">
+  <meta name="robots" content="noindex, nofollow">
+
+  <title>404 - Page non trouvée | {{site.title}}</title>
+</head>
+<body>
+  {{> theme-icons}}
+
+  {{> header}}
+
+  <!-- Main Content -->
+  <main class="site-main">
+    <!-- 404 Section -->
+    <section class="error-section">
+      <div class="container">
+        <div class="row align-items-center min-vh-70">
+          <div class="col-lg-8 mx-auto text-center">
+            <div class="error-content">
+              <h1 class="error-code">404</h1>
+              <h2 class="error-title">Page non trouvée</h2>
+              <p class="error-description">
+                Désolé, la page que vous recherchez n'existe pas ou a été déplacée.
+              </p>
+              <div class="error-actions mt-4">
+                <a href="/" class="btn btn-primary btn-lg me-3">Retour à l'accueil</a>
+                <a href="/articles/" class="btn btn-outline-primary btn-lg">Voir les articles</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {{> footer}}
+
+  {{> scripts}}
+</body>
+</html>

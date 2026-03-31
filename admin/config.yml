@@ -1,0 +1,151 @@
+# Decap CMS Configuration
+# Documentation: https://decapcms.org/docs/configuration-options/
+
+# Backend configuration - using local file system for development
+backend:
+  name: proxy
+  proxy_url: http://localhost:8081/api/v1
+  branch: master
+
+# Local backend for development (no Git needed)
+local_backend: true
+
+# Media files configuration
+media_folder: "src/media" # Where uploaded original images will be stored
+public_folder: "/media"   # URL path for preview (points to originals)
+
+# Site URL (used for preview)
+site_url: http://localhost:8080
+display_url: http://localhost:8080
+
+# Collections - define your content types
+collections:
+  # Blog Articles
+  - name: "articles"
+    label: "Articles"
+    label_singular: "Article"
+    folder: "content/articles"
+    create: true
+    slug: "{{slug}}"
+    preview_path: "articles/{{slug}}.html"
+    fields:
+      - {label: "Title", name: "title", widget: "string", required: true}
+      - {label: "Publish Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false, required: true}
+      - {label: "Author", name: "author", widget: "string", default: "Frederic Leaux", required: true}
+      - {label: "Description", name: "description", widget: "text", required: true, hint: "SEO description (150-160 characters recommended)"}
+      - {label: "Excerpt", name: "excerpt", widget: "text", required: false, hint: "Short excerpt for article preview"}
+      - {label: "Featured Image", name: "image", widget: "image", required: false, allow_multiple: false}
+      - {label: "Image Alt Text", name: "imageAlt", widget: "string", required: false, hint: "Alternative text for the featured image (accessibility)"}
+      - {label: "Tags", name: "tags", widget: "list", required: false, default: []}
+      - {label: "Body", name: "body", widget: "markdown", required: true}
+
+  # Static Pages
+  - name: "pages"
+    label: "Pages"
+    label_singular: "Page"
+    folder: "content/pages"
+    create: true
+    slug: "{{slug}}"
+    preview_path: "{{slug}}.html"
+    fields:
+      - {label: "Title", name: "title", widget: "string", required: true}
+      - {label: "Description", name: "description", widget: "text", required: false, hint: "SEO description"}
+      - {label: "Body", name: "body", widget: "markdown", required: true}
+
+  # Site Configuration
+  - name: "config"
+    label: "Site Configuration"
+    files:
+      # Site Settings
+      - label: "Site Settings"
+        name: "site"
+        file: "config/site.json"
+        fields:
+          - {label: "Site Title", name: "title", widget: "string", required: true}
+          - {label: "Site Description", name: "description", widget: "text", required: true}
+          - {label: "Site URL", name: "url", widget: "string", required: true, pattern: ['^https?://.+', 'Must be a valid URL']}
+          - {label: "Author", name: "author", widget: "string", required: true}
+          - {label: "Language", name: "language", widget: "select", options: ["fr", "en"], default: "fr"}
+          - {label: "Default OG Image", name: "defaultImage", widget: "string", default: "/assets/img/default-og.jpg"}
+          - label: "Social Media"
+            name: "social"
+            widget: "object"
+            fields:
+              - {label: "Twitter", name: "twitter", widget: "string", required: false}
+              - {label: "GitHub", name: "github", widget: "string", required: false}
+              - {label: "LinkedIn", name: "linkedin", widget: "string", required: false}
+
+      # Theme Settings
+      - label: "Theme Settings"
+        name: "theme"
+        file: "config/theme.json"
+        fields:
+          - label: "Colors"
+            name: "colors"
+            widget: "object"
+            fields:
+              - {label: "Primary", name: "primary", widget: "string", default: "#000000", hint: "Main color"}
+              - {label: "Secondary", name: "secondary", widget: "string", default: "#1d1d1f"}
+              - {label: "Accent", name: "accent", widget: "string", default: "#0071e3", hint: "Links and buttons"}
+              - {label: "Text", name: "text", widget: "string", default: "#1d1d1f"}
+              - {label: "Text Light", name: "textLight", widget: "string", default: "#6e6e73"}
+              - {label: "Background", name: "background", widget: "string", default: "#ffffff"}
+              - {label: "Background Alt", name: "backgroundAlt", widget: "string", default: "#f5f5f7"}
+              - {label: "Border", name: "border", widget: "string", default: "#d2d2d7"}
+          - label: "Fonts"
+            name: "fonts"
+            widget: "object"
+            fields:
+              - {label: "Primary Font", name: "primary", widget: "string", default: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif"}
+              - {label: "Monospace Font", name: "mono", widget: "string", default: "'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', 'Droid Sans Mono', monospace"}
+          - label: "Spacing"
+            name: "spacing"
+            widget: "object"
+            fields:
+              - {label: "Section Padding", name: "sectionPadding", widget: "string", default: "80px"}
+              - {label: "Container Max Width", name: "containerMaxWidth", widget: "string", default: "1200px"}
+          - {label: "Border Radius", name: "borderRadius", widget: "string", default: "12px"}
+          - {label: "Transition", name: "transition", widget: "string", default: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"}
+
+      # Navigation
+      - label: "Navigation"
+        name: "navigation"
+        file: "config/navigation.json"
+        fields:
+          - label: "Header"
+            name: "header"
+            widget: "object"
+            fields:
+              - label: "Logo"
+                name: "logo"
+                widget: "object"
+                fields:
+                  - {label: "Text", name: "text", widget: "string", default: "Leaux.ovh"}
+                  - {label: "URL", name: "url", widget: "string", default: "/"}
+              - label: "Navigation Links"
+                name: "links"
+                widget: "list"
+                fields:
+                  - {label: "Text", name: "text", widget: "string"}
+                  - {label: "URL", name: "url", widget: "string"}
+          - label: "Footer"
+            name: "footer"
+            widget: "object"
+            fields:
+              - {label: "Copyright", name: "copyright", widget: "string", default: "© 2024 Frederic Leaux. All rights reserved."}
+              - label: "Footer Links"
+                name: "links"
+                widget: "list"
+                fields:
+                  - {label: "Text", name: "text", widget: "string"}
+                  - {label: "URL", name: "url", widget: "string"}
+
+# Editor configuration
+editor:
+  preview: true # Enable preview panel
+
+# Slug configuration
+slug:
+  encoding: "ascii"
+  clean_accents: true
+  sanitize_replacement: "-"

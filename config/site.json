@@ -1,0 +1,13 @@
+{
+  "title": "Leaux.ovh",
+  "description": "Personal website and blog",
+  "url": "https://leaux.ovh",
+  "author": "Frederic Leaux",
+  "language": "fr",
+  "defaultImage": "/assets/img/default-og.jpg",
+  "social": {
+    "twitter": "",
+    "github": "",
+    "linkedin": ""
+  }
+}

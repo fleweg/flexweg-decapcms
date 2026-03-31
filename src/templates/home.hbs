@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="{{site.language}}" data-bs-theme="light">
+<head>
+{{> meta-common}}
+  <meta name="description" content="{{site.description}}">
+  <meta name="author" content="{{site.author}}">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{pageTitle}}">
+  <meta property="og:description" content="{{site.description}}">
+  <meta property="og:url" content="{{site.url}}{{currentUrl}}">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="{{site.url}}{{site.defaultImage}}">
+
+  <title>{{pageTitle}}</title>
+</head>
+<body>
+  {{> theme-icons}}
+
+  {{> header}}
+
+  <!-- Main Content -->
+  <main class="site-main">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      {{> animated-background}}
+      <div class="container">
+        <div class="row align-items-center min-vh-70">
+          <div class="col-lg-8 mx-auto text-center">
+            <h1 class="hero-title">Welcome to {{site.title}}</h1>
+            <p class="hero-subtitle">{{site.description}}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Latest Articles Section -->
+    <section class="articles-section">
+      <div class="container">
+        <div class="section-header text-center mb-5">
+          <h2 class="section-title">Latest Articles</h2>
+          <p class="section-subtitle">Discover our recent posts</p>
+        </div>
+
+        {{#if articles}}
+        <div class="row g-4">
+          {{#each articles}}
+          <div class="col-md-6 col-lg-4">
+            <article class="article-card">
+              {{#if image}}
+              <div class="article-card-image">
+                <a href="{{url}}">
+                  <img src="{{image.medium}}"
+                       srcset="{{image.small}} 40w, {{image.medium}} 300w, {{image.large}} 1200w"
+                       sizes="(max-width: 768px) 100vw, 33vw"
+                       alt="{{image.alt}}"
+                       class="img-fluid"
+                       loading="lazy">
+                </a>
+              </div>
+              {{/if}}
+              <div class="article-card-content">
+                {{#if tags}}
+                <div class="article-tags mb-2">
+                  {{#each tags}}
+                  <span class="badge bg-light text-dark">{{this}}</span>
+                  {{/each}}
+                </div>
+                {{/if}}
+                <h3 class="article-card-title">
+                  <a href="{{url}}">{{title}}</a>
+                </h3>
+                <p class="article-card-excerpt">{{truncate description 150}}</p>
+                <div class="article-card-meta">
+                  <span class="article-date">{{formatDate date}}</span>
+                  {{#if author}}
+                  <span class="article-author">by {{author}}</span>
+                  {{/if}}
+                </div>
+                <a href="{{url}}" class="btn-read-more">Read more →</a>
+              </div>
+            </article>
+          </div>
+          {{/each}}
+        </div>
+
+        <div class="text-center mt-5">
+          <a href="/articles/" class="btn btn-primary btn-lg">View all articles</a>
+        </div>
+        {{else}}
+        <div class="text-center">
+          <p class="text-muted">No articles yet. Check back soon!</p>
+        </div>
+        {{/if}}
+      </div>
+    </section>
+  </main>
+
+  {{> footer}}
+
+  {{> scripts}}
+</body>
+</html>

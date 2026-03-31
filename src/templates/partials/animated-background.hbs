@@ -1,0 +1,103 @@
+<style>
+/* Animated background blobs */
+.hero-blobs {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  filter: blur(80px);
+  z-index: 1;
+  opacity: 0.5;
+  overflow: hidden;
+}
+
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+.hero-blob-1 {
+  width: 600px;
+  height: 600px;
+  background: #1d4ed8;
+  top: -100px;
+  left: -100px;
+  animation: blobMove1 15s infinite ease-in-out;
+}
+
+.hero-blob-2 {
+  width: 500px;
+  height: 500px;
+  background: #6366f1;
+  bottom: -50px;
+  right: -50px;
+  animation: blobMove2 20s infinite ease-in-out;
+  animation-delay: -3s;
+}
+
+.hero-blob-3 {
+  width: 400px;
+  height: 400px;
+  background: #9333ea;
+  top: 30%;
+  left: 25%;
+  animation: blobMove3 12s infinite ease-in-out;
+}
+
+@keyframes blobMove1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  25% {
+    transform: translate3d(80px, 80px, 0) scale(1.05);
+  }
+  50% {
+    transform: translate3d(150px, 150px, 0) scale(1.1);
+  }
+  75% {
+    transform: translate3d(80px, 80px, 0) scale(1.05);
+  }
+}
+
+@keyframes blobMove2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  25% {
+    transform: translate3d(-50px, -50px, 0) scale(1.08);
+  }
+  50% {
+    transform: translate3d(-100px, -100px, 0) scale(1.15);
+  }
+  75% {
+    transform: translate3d(-50px, -50px, 0) scale(1.08);
+  }
+}
+
+@keyframes blobMove3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  25% {
+    transform: translate3d(50px, -50px, 0) scale(1.04);
+  }
+  50% {
+    transform: translate3d(100px, -100px, 0) scale(1.08);
+  }
+  75% {
+    transform: translate3d(50px, -50px, 0) scale(1.04);
+  }
+}
+
+/* Same colors for both light and dark mode (dark background always) */
+</style>
+
+<div class="hero-blobs">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
+</div>

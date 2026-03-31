@@ -1,0 +1,46 @@
+name: Deploy to Flexweg
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Debug ENV
+        run: |
+          echo "API KEY length:"
+          echo ${#FLEXWEG_API_KEY}
+        env:
+          FLEXWEG_API_KEY: ${{ secrets.FLEXWEG_API_KEY }}
+      
+      - name: Debug
+        run: |
+          pwd
+          ls -la
+          ls -la public || echo "❌ no dist folder"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Nécessaire pour détecter les fichiers supprimés (HEAD~1)
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install axios
+
+      #- name: Build project (if applicable)
+      #  run: npm run build  # Ajustez selon votre projet (ex: npm run build, gulp build, etc.)
+
+      - name: Deploy to Flexweg
+        env:
+          FLEXWEG_API_KEY: ${{ secrets.FLEXWEG_API_KEY }}
+          FLEXWEG_BASE_URL: https://www.flexweg.com
+        run: node sync-flexweg.js
