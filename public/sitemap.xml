@@ -7,18 +7,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://flexweg.com/articles/mon-premier-article.html</loc>
-    <lastmod>2026-03-28</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://flexweg.com/articles/welcome.html</loc>
-    <lastmod>2024-03-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://flexweg.com/articles/getting-started.html</loc>
     <lastmod>2024-03-26</lastmod>
     <changefreq>weekly</changefreq>
