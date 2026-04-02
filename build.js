@@ -115,41 +115,29 @@ function processShortcodes(content) {
     // Remove any query parameters (like ?si=...)
     videoId = videoId.split('?')[0].split('&')[0];
 
-    return `<div class="ratio ratio-16x9 mb-4">
-  <iframe src="https://www.youtube.com/embed/${videoId}"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen>
-  </iframe>
-</div>`;
+    // Use the youtube partial template
+    const youtubeTemplate = Handlebars.compile(fs.readFileSync(path.join(PATHS.templates, 'partials/youtube.hbs'), 'utf8'));
+    return youtubeTemplate({ videoId });
   });
 
   // Call to Action shortcode: {{< cta title="..." text="..." buttonText="..." buttonUrl="..." >}}
+  const ctaTemplate = Handlebars.compile(fs.readFileSync(path.join(PATHS.templates, 'partials/cta.hbs'), 'utf8'));
   processed = processed.replace(/{{<\s*cta\s+title="([^"]+)"\s+text="([^"]+)"\s+buttonText="([^"]+)"\s+buttonUrl="([^"]+)"\s*>}}/g,
     (match, title, text, buttonText, buttonUrl) => {
-      return `<div class="alert alert-primary mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 2rem; border-radius: 12px;">
-  <h3 style="color: white; margin-bottom: 1rem;">${title}</h3>
-  <p style="margin-bottom: 1.5rem;">${text}</p>
-  <a href="${buttonUrl}" class="btn btn-light">${buttonText}</a>
-</div>`;
+      return ctaTemplate({ title, text, buttonText, buttonUrl });
     }
   );
 
   // FAQ shortcode: {{< faq question="..." answer="..." >}}
+  const faqTemplate = Handlebars.compile(fs.readFileSync(path.join(PATHS.templates, 'partials/faq.hbs'), 'utf8'));
   processed = processed.replace(/{{<\s*faq\s+question="([^"]+)"\s+answer="([^"]+)"\s*>}}/g,
     (match, question, answer) => {
-      return `<div class="card mb-3" itemscope itemtype="https://schema.org/Question">
-  <div class="card-body">
-    <h5 class="card-title" style="color: #0071e3; margin-bottom: 0.75rem;" itemprop="name">Q: ${question}</h5>
-    <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-      <p class="card-text" style="color: #6e6e73;" itemprop="text">A: ${answer}</p>
-    </div>
-  </div>
-</div>`;
+      return faqTemplate({ question, answer });
     }
   );
 
   // Alert shortcode: {{< alert type="info|success|warning|danger" text="..." >}}
+  const alertTemplate = Handlebars.compile(fs.readFileSync(path.join(PATHS.templates, 'partials/alert.hbs'), 'utf8'));
   processed = processed.replace(/{{<\s*alert\s+type="([^"]+)"\s+text="([^"]+)"\s*>}}/g,
     (match, type, text) => {
       const colors = {
@@ -158,26 +146,15 @@ function processShortcodes(content) {
         warning: '#ffc107',
         danger: '#dc3545'
       };
-      return `<div class="alert alert-${type} mb-4" style="border-left: 4px solid ${colors[type]}; padding: 1rem; border-radius: 4px;">
-  ${text}
-</div>`;
+      return alertTemplate({ type, text, borderColor: colors[type] });
     }
   );
 
   // Figure shortcode: {{< figure src="..." alt="..." caption="..." >}}
+  const figureTemplate = Handlebars.compile(fs.readFileSync(path.join(PATHS.templates, 'partials/figure.hbs'), 'utf8'));
   processed = processed.replace(/{{<\s*figure\s+src="([^"]+)"\s+alt="([^"]+)"(?:\s+caption="([^"]+)")?\s*>}}/g,
     (match, src, alt, caption) => {
-      let html = `<figure class="mb-4" style="text-align: center;">
-  <img src="${src}" alt="${alt}" class="img-fluid" style="max-width: 100%; height: auto; border-radius: 8px;">`;
-
-      if (caption) {
-        html += `
-  <figcaption style="margin-top: 0.5rem; color: #6e6e73; font-size: 0.9rem; font-style: italic;">${caption}</figcaption>`;
-      }
-
-      html += `
-</figure>`;
-      return html;
+      return figureTemplate({ src, alt, caption: caption || '' });
     }
   );
 

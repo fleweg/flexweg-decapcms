@@ -3,6 +3,8 @@ const { spawn } = require('child_process');
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs-extra');
+const Handlebars = require('handlebars');
 
 console.log('🔧 Starting development server...\n');
 
@@ -139,6 +141,23 @@ app.use('/config', express.static(path.join(__dirname, 'config')));
 
 // Serve admin panel
 app.use('/admin', express.static(path.join(__dirname, 'admin')));
+
+// API endpoint to get rendered component templates
+app.get('/api/templates/:component', (req, res) => {
+  const component = req.params.component;
+  const templatePath = path.join(__dirname, 'src/templates/partials', `${component}.hbs`);
+
+  if (!fs.existsSync(templatePath)) {
+    return res.status(404).json({ error: 'Template not found' });
+  }
+
+  try {
+    const templateContent = fs.readFileSync(templatePath, 'utf8');
+    res.json({ template: templateContent });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // API endpoint to trigger build from admin
 app.post('/api/build', (req, res) => {
