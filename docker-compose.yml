@@ -1,0 +1,12 @@
+services:
+  app_flexweg:
+    build:
+      args:
+        - NODE_VERSION=${NODE_VERSION:-20}
+      context: .
+      dockerfile: ./Dockerfile
+    image: "${DOCKER_IMAGE:-flexweg}:${DOCKER_IMAGE_TAG:-latest}"
+    restart: unless-stopped
+
+volumes:
+  persistent:

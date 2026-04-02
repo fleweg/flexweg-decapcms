@@ -1,0 +1,42 @@
+services:
+  app_flexweg:
+    build:
+      args:
+        - NODE_VERSION=${NODE_VERSION:-20}
+    env_file: .env
+    volumes:
+      - ./:/var/www/project/:cached
+      # Uncomment if you want to work with external content directories
+      #- ../external-content:/var/www/project/content
+    labels:
+      # Admin Panel - Decap CMS
+      - "traefik.http.routers.${PROJECT_NAME}-admin.rule=Host(`admin.${APP_FQDN}`)"
+      - "traefik.http.routers.${PROJECT_NAME}-admin.entrypoints=http"
+      - "traefik.http.services.${PROJECT_NAME}-admin.loadbalancer.server.port=3333"
+      # Site Preview - Live Server
+      - "traefik.http.routers.${PROJECT_NAME}.rule=Host(`${APP_FQDN}`)"
+      - "traefik.http.routers.${PROJECT_NAME}.entrypoints=http"
+      - "traefik.http.services.${PROJECT_NAME}.loadbalancer.server.port=8080"
+    environment:
+      - NODE_ENV=${APP_ENV:-development}
+      - FLEXWEG_API_KEY=${FLEXWEG_API_KEY}
+      - FLEXWEG_BASE_URL=${FLEXWEG_BASE_URL}
+    networks:
+      - traefik
+      - flexweg
+    ports:
+      # Expose ports for local development without Traefik
+      - "${ADMIN_PORT:-3333}:3333"
+      - "${SITE_PORT:-8080}:8080"
+    command: >
+      sh -c "
+      touch /var/www/project/.docker_check &&
+      echo 'Docker env up' > /var/www/project/.docker_check &&
+      npm install &&
+      supervisord -c /etc/supervisor/supervisord.conf
+      "
+
+networks:
+  flexweg:
+  traefik:
+    external: true

@@ -11,7 +11,7 @@ We'd love to hear from you! Whether you have a question, feedback, or just want 
 
 You can contact us through various channels:
 
-- **Email**: contact@leaux.ovh
+- **Email**: contact@flexweg.com
 - **GitHub**: [Your GitHub Profile]
 - **LinkedIn**: [Your LinkedIn Profile]
 

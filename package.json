@@ -1,5 +1,5 @@
 {
-  "name": "flexweg-fleox",
+  "name": "flexweg-decapcms",
   "version": "1.0.0",
   "description": "Static site generator with Bootstrap and dynamic article feed",
   "main": "build.js",

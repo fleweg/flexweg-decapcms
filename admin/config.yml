@@ -120,7 +120,7 @@ collections:
                 name: "logo"
                 widget: "object"
                 fields:
-                  - {label: "Text", name: "text", widget: "string", default: "Leaux.ovh"}
+                  - {label: "Text", name: "text", widget: "string", default: "Flexweg"}
                   - {label: "URL", name: "url", widget: "string", default: "/"}
               - label: "Navigation Links"
                 name: "links"

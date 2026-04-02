@@ -1,0 +1,11 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+.env
+.env.local
+*.md
+!CLAUDE.md
+public
+.DS_Store
+.docker_check
