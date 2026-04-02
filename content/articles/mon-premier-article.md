@@ -4,7 +4,7 @@ date: 2026-03-28
 author: Frederic Leaux
 description: Ceci est un article de test realisé avec l'admib
 excerpt: Ceci est une excerpt de test pour l'article d'admin
-image: /media/crop_alf.png
+image: /media/1617885371029.jpg
 tags:
   - Admin
 ---

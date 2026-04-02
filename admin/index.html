@@ -24,5 +24,89 @@
 
   <!-- Decap CMS - loaded at the end to ensure body is ready -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+  <!-- Custom preview template -->
+  <script>
+    // Register custom preview template for articles
+    CMS.registerPreviewTemplate('articles', createClass({
+      render: function() {
+        const entry = this.props.entry;
+        const title = entry.getIn(['data', 'title']);
+        const body = entry.getIn(['data', 'body']);
+        const customCode = entry.getIn(['data', 'customCode']);
+        const tags = entry.getIn(['data', 'tags']);
+        const author = entry.getIn(['data', 'author']);
+        const date = entry.getIn(['data', 'date']);
+        const description = entry.getIn(['data', 'description']);
+        const image = entry.getIn(['data', 'image']);
+
+        return h('div', {className: 'article-preview', style: {padding: '2rem'}},
+          // Tags
+          tags && tags.size > 0 && h('div', {className: 'article-tags', style: {marginBottom: '1rem'}},
+            tags.toArray().map((tag, i) => h('span', {
+              key: i,
+              className: 'badge',
+              style: {
+                background: '#0071e3',
+                color: 'white',
+                padding: '0.25rem 0.5rem',
+                borderRadius: '4px',
+                marginRight: '0.5rem',
+                fontSize: '0.875rem'
+              }
+            }, tag))
+          ),
+
+          // Title
+          h('h1', {style: {fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem'}}, title),
+
+          // Meta info
+          h('div', {style: {color: '#6e6e73', marginBottom: '1rem'}},
+            h('span', {}, date && new Date(date).toLocaleDateString('fr-FR')),
+            author && h('span', {style: {marginLeft: '1rem'}}, 'by ' + author)
+          ),
+
+          // Description
+          description && h('p', {style: {fontSize: '1.125rem', color: '#6e6e73', marginBottom: '2rem'}}, description),
+
+          // Featured image
+          image && h('img', {
+            src: image,
+            style: {
+              width: '100%',
+              height: 'auto',
+              borderRadius: '12px',
+              marginBottom: '2rem'
+            }
+          }),
+
+          // Body content (markdown widget already renders to HTML)
+          body && h('div', {
+            className: 'prose',
+            style: {
+              lineHeight: '1.7',
+              fontSize: '1.125rem',
+              maxWidth: '65ch',
+              marginBottom: '2rem'
+            }
+          }, this.props.widgetFor('body')),
+
+          // Custom HTML/JS code (rendered as HTML)
+          customCode && h('div', {
+            className: 'custom-code',
+            style: {
+              marginTop: '2rem',
+              padding: '1rem',
+              background: '#f5f5f7',
+              borderRadius: '8px'
+            },
+            dangerouslySetInnerHTML: {
+              __html: customCode
+            }
+          })
+        );
+      }
+    }));
+  </script>
 </body>
 </html>
