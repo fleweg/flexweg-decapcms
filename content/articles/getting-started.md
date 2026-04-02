@@ -1,5 +1,5 @@
 ---
-title: Getting Started with Static Sites
+title: Getting Started with Static Sites.
 date: 2024-03-26
 author: Frederic Leaux
 description: Learn the basics of static site generation and why it's a great

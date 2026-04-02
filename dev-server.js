@@ -90,9 +90,46 @@ imageWatcherProcess.stderr.on('data', (data) => {
 // Start Express server for Admin Panel
 const app = express();
 const ADMIN_PORT = 3333;
+const http = require('http');
 
 // Enable CORS for local development
 app.use(cors());
+
+// Proxy for Decap CMS backend API - must be before static middleware
+app.use('/api/v1', (req, res) => {
+  const targetPath = '/api/v1' + req.url;
+  console.log(`[Proxy] ${req.method} ${targetPath}`);
+
+  const options = {
+    hostname: 'localhost',
+    port: 8081,
+    path: targetPath,
+    method: req.method,
+    headers: {
+      ...req.headers,
+      host: 'localhost:8081'
+    }
+  };
+
+  const proxyReq = http.request(options, (proxyRes) => {
+    console.log(`[Proxy] Response: ${proxyRes.statusCode}`);
+
+    // Copy headers from proxy response
+    Object.keys(proxyRes.headers).forEach(key => {
+      res.setHeader(key, proxyRes.headers[key]);
+    });
+    res.writeHead(proxyRes.statusCode);
+    proxyRes.pipe(res);
+  });
+
+  proxyReq.on('error', (err) => {
+    console.error('[Proxy] Error:', err.message);
+    res.status(502).send('Bad Gateway');
+  });
+
+  // Pipe request body for POST/PUT requests
+  req.pipe(proxyReq);
+});
 
 // Serve static files from public/ (for image previews in Decap CMS)
 app.use(express.static(path.join(__dirname, 'public')));

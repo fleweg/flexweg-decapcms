@@ -4,7 +4,7 @@
 # Backend configuration - using local file system for development
 backend:
   name: proxy
-  proxy_url: http://localhost:8081/api/v1
+  proxy_url: /api/v1
   branch: master
 
 # Local backend for development (no Git needed)
