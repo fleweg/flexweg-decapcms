@@ -83,6 +83,21 @@ collections:
             fields:
               - {label: "Bootstrap CSS", name: "bootstrap", widget: "string", required: true, default: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"}
               - {label: "Bootstrap JS", name: "bootstrapJs", widget: "string", required: true, default: "https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"}
+          - label: "Sitemap Settings"
+            name: "sitemap"
+            widget: "object"
+            collapsed: true
+            fields:
+              - {label: "Enable Sitemap", name: "enabled", widget: "boolean", default: true, hint: "Generate sitemap.xml automatically"}
+              - {label: "Change Frequency", name: "changefreq", widget: "select", options: ["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"], default: "weekly", hint: "How often pages are updated"}
+              - label: "Priority"
+                name: "priority"
+                widget: "object"
+                collapsed: false
+                fields:
+                  - {label: "Home Page", name: "home", widget: "string", default: "1.0", pattern: ['^(0(\.\d)?|1(\.0)?)$', 'Must be between 0.0 and 1.0']}
+                  - {label: "Pages", name: "pages", widget: "string", default: "0.8", pattern: ['^(0(\.\d)?|1(\.0)?)$', 'Must be between 0.0 and 1.0']}
+                  - {label: "Articles", name: "articles", widget: "string", default: "0.6", pattern: ['^(0(\.\d)?|1(\.0)?)$', 'Must be between 0.0 and 1.0']}
 
       # Theme Settings
       - label: "Theme Settings"

@@ -420,11 +420,17 @@ config/theme.json → public/assets/css/theme.css
 
 ## Future Enhancements
 
+### Implemented
+
+- [x] Sitemap.xml generation (automatic, configurable via admin)
+- [x] Image optimization (WebP conversion with multiple sizes)
+- [x] Editor Components for rich content (YouTube, CTA, FAQ, Alert, Figure)
+- [x] Handlebars template-based components
+- [x] Custom HTML/JS code blocks in articles and pages
+
 ### Planned
 
 - [ ] Client-side search (JSON index)
-- [ ] Image optimization (resize, compress)
-- [ ] Sitemap.xml generation
 - [ ] RSS feed generation
 - [ ] Pagination for article listing
 - [ ] Draft/published status for articles

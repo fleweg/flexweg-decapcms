@@ -460,6 +460,126 @@ function copyAssets() {
   }
 }
 
+// Generate sitemap.xml
+function generateSitemap(config, articles) {
+  if (!config.site.sitemap || !config.site.sitemap.enabled) {
+    console.log('⏭️  Sitemap generation disabled');
+    return;
+  }
+
+  console.log('🗺️  Generating sitemap.xml...');
+
+  const baseUrl = config.site.url.replace(/\/$/, ''); // Remove trailing slash
+  const changefreq = config.site.sitemap.changefreq || 'weekly';
+  const priority = config.site.sitemap.priority || {
+    home: '1.0',
+    pages: '0.8',
+    articles: '0.6'
+  };
+
+  const urls = [];
+
+  // Add home page
+  urls.push({
+    loc: baseUrl + '/',
+    lastmod: new Date().toISOString().split('T')[0],
+    changefreq: changefreq,
+    priority: priority.home
+  });
+
+  // Add articles
+  articles.forEach(article => {
+    urls.push({
+      loc: baseUrl + article.url,
+      lastmod: new Date(article.date).toISOString().split('T')[0],
+      changefreq: changefreq,
+      priority: priority.articles
+    });
+  });
+
+  // Add articles index
+  urls.push({
+    loc: baseUrl + '/articles/',
+    lastmod: new Date().toISOString().split('T')[0],
+    changefreq: changefreq,
+    priority: priority.pages
+  });
+
+  // Add static pages
+  const pagesDir = path.join(PATHS.content, 'pages');
+  if (fs.existsSync(pagesDir)) {
+    const addPagesFromDir = (dir, relativePath = '') => {
+      const items = fs.readdirSync(dir, { withFileTypes: true });
+
+      items.forEach(item => {
+        const itemPath = path.join(dir, item.name);
+        const itemRelativePath = path.join(relativePath, item.name);
+
+        if (item.isDirectory()) {
+          addPagesFromDir(itemPath, itemRelativePath);
+        } else if (item.isFile() && item.name.endsWith('.md')) {
+          const slug = path.basename(item.name, '.md');
+          const outputRelativeDir = path.dirname(itemRelativePath);
+          const outputFileName = slug === 'index' ? 'index.html' : `${slug}.html`;
+          const pageUrl = path.join('/', outputRelativeDir, outputFileName).replace(/\\/g, '/');
+
+          // Read file to get date if available
+          const fileContent = fs.readFileSync(itemPath, 'utf8');
+          const { data } = matter(fileContent);
+          const lastmod = data.date ? new Date(data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+
+          urls.push({
+            loc: baseUrl + pageUrl,
+            lastmod: lastmod,
+            changefreq: changefreq,
+            priority: priority.pages
+          });
+        }
+      });
+    };
+
+    addPagesFromDir(pagesDir);
+  }
+
+  // Generate XML
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+
+  urls.forEach(url => {
+    xml += '  <url>\n';
+    xml += `    <loc>${url.loc}</loc>\n`;
+    xml += `    <lastmod>${url.lastmod}</lastmod>\n`;
+    xml += `    <changefreq>${url.changefreq}</changefreq>\n`;
+    xml += `    <priority>${url.priority}</priority>\n`;
+    xml += '  </url>\n';
+  });
+
+  xml += '</urlset>\n';
+
+  // Write sitemap.xml
+  const sitemapPath = path.join(PATHS.public, 'sitemap.xml');
+  fs.writeFileSync(sitemapPath, xml);
+  console.log(`  ✓ sitemap.xml generated (${urls.length} URLs)`);
+}
+
+// Generate robots.txt
+function generateRobotsTxt(config) {
+  console.log('🤖 Generating robots.txt...');
+
+  const baseUrl = config.site.url.replace(/\/$/, ''); // Remove trailing slash
+
+  const robotsTxt = `User-agent: *
+Allow: /
+
+Sitemap: ${baseUrl}/sitemap.xml
+`;
+
+  // Write robots.txt
+  const robotsPath = path.join(PATHS.public, 'robots.txt');
+  fs.writeFileSync(robotsPath, robotsTxt);
+  console.log('  ✓ robots.txt generated');
+}
+
 // Generate CSS from theme config
 function generateThemeCSS(theme) {
   console.log('🎨 Generating theme CSS...');
@@ -532,6 +652,12 @@ async function build() {
 
     // Build 404 page
     build404(config);
+
+    // Generate sitemap
+    generateSitemap(config, articles);
+
+    // Generate robots.txt
+    generateRobotsTxt(config);
 
     console.log('\n✅ Build completed successfully!');
     console.log(`📁 Output: ${PATHS.public}`);
