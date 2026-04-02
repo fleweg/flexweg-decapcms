@@ -25,6 +25,9 @@
   <!-- Decap CMS - loaded at the end to ensure body is ready -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
+  <!-- Markdown-it for processing markdown in preview -->
+  <script src="https://cdn.jsdelivr.net/npm/markdown-it@13/dist/markdown-it.min.js"></script>
+
   <!-- Preview Styles -->
   <script>
     // Load site config and register preview styles
@@ -45,20 +48,306 @@
       });
   </script>
 
+  <!-- Editor Components -->
+  <script>
+    // YouTube embed component
+    CMS.registerEditorComponent({
+      id: "youtube",
+      label: "YouTube",
+      fields: [
+        { name: 'id', label: 'YouTube Video ID or URL', widget: 'string', hint: 'Paste the YouTube URL or just the video ID' }
+      ],
+      pattern: /^{{< youtube (\S+) >}}$/,
+      fromBlock: function(match) {
+        return { id: match[1] };
+      },
+      toBlock: function(data) {
+        // Extract video ID from various YouTube URL formats
+        var videoId = data.id;
+
+        // Return empty if no ID provided
+        if (!videoId) {
+          return '';
+        }
+
+        // Remove any whitespace
+        videoId = videoId.trim();
+
+        // If it's a full URL, extract the ID
+        if (videoId.includes('youtube.com') || videoId.includes('youtu.be')) {
+          // Handle youtu.be/VIDEO_ID format
+          var youtuBeMatch = videoId.match(/youtu\.be\/([^\?&]+)/);
+          if (youtuBeMatch) {
+            videoId = youtuBeMatch[1];
+          } else {
+            // Handle youtube.com/watch?v=VIDEO_ID format
+            var watchMatch = videoId.match(/[?&]v=([^&]+)/);
+            if (watchMatch) {
+              videoId = watchMatch[1];
+            } else {
+              // Handle youtube.com/embed/VIDEO_ID format
+              var embedMatch = videoId.match(/\/embed\/([^\?&]+)/);
+              if (embedMatch) {
+                videoId = embedMatch[1];
+              }
+            }
+          }
+        }
+
+        // Remove any query parameters (like ?si=...)
+        videoId = videoId.split('?')[0].split('&')[0];
+
+        return '{{< youtube ' + videoId + ' >}}';
+      },
+      toPreview: function(data) {
+        // Extract video ID for preview (same logic as toBlock)
+        var videoId = data.id;
+
+        // Return placeholder if no ID provided
+        if (!videoId) {
+          return '<div class="alert alert-info">Enter a YouTube URL or video ID</div>';
+        }
+
+        if (videoId.includes('youtube.com') || videoId.includes('youtu.be')) {
+          var youtuBeMatch = videoId.match(/youtu\.be\/([^\?&]+)/);
+          if (youtuBeMatch) {
+            videoId = youtuBeMatch[1];
+          } else {
+            var watchMatch = videoId.match(/[?&]v=([^&]+)/);
+            if (watchMatch) {
+              videoId = watchMatch[1];
+            } else {
+              var embedMatch = videoId.match(/\/embed\/([^\?&]+)/);
+              if (embedMatch) {
+                videoId = embedMatch[1];
+              }
+            }
+          }
+        }
+
+        videoId = videoId.split('?')[0].split('&')[0];
+
+        return '<div class="ratio ratio-16x9 mb-4"><iframe src="https://www.youtube.com/embed/' + videoId + '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+      }
+    });
+
+    // Call to Action component
+    CMS.registerEditorComponent({
+      id: "cta",
+      label: "Call to Action",
+      fields: [
+        { name: 'title', label: 'Title', widget: 'string' },
+        { name: 'text', label: 'Text', widget: 'text' },
+        { name: 'buttonText', label: 'Button Text', widget: 'string' },
+        { name: 'buttonUrl', label: 'Button URL', widget: 'string' }
+      ],
+      pattern: /^{{< cta title="([^"]+)" text="([^"]+)" buttonText="([^"]+)" buttonUrl="([^"]+)" >}}$/,
+      fromBlock: function(match) {
+        return {
+          title: match[1],
+          text: match[2],
+          buttonText: match[3],
+          buttonUrl: match[4]
+        };
+      },
+      toBlock: function(data) {
+        return '{{< cta title="' + data.title + '" text="' + data.text + '" buttonText="' + data.buttonText + '" buttonUrl="' + data.buttonUrl + '" >}}';
+      },
+      toPreview: function(data) {
+        return '<div class="alert alert-primary mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 2rem; border-radius: 12px;"><h3 style="color: white; margin-bottom: 1rem;">' + data.title + '</h3><p style="margin-bottom: 1.5rem;">' + data.text + '</p><a href="' + data.buttonUrl + '" class="btn btn-light">' + data.buttonText + '</a></div>';
+      }
+    });
+
+    // FAQ component (schema.org compatible)
+    CMS.registerEditorComponent({
+      id: "faq",
+      label: "FAQ Item",
+      fields: [
+        { name: 'question', label: 'Question', widget: 'string' },
+        { name: 'answer', label: 'Answer', widget: 'text' }
+      ],
+      pattern: /^{{< faq question="([^"]+)" answer="([^"]+)" >}}$/,
+      fromBlock: function(match) {
+        return {
+          question: match[1],
+          answer: match[2]
+        };
+      },
+      toBlock: function(data) {
+        return '{{< faq question="' + data.question + '" answer="' + data.answer + '" >}}';
+      },
+      toPreview: function(data) {
+        return '<div class="card mb-3" style="border: 1px solid #dee2e6; border-radius: 8px;"><div class="card-body"><h5 class="card-title" style="color: #0071e3; margin-bottom: 0.75rem;">Q: ' + data.question + '</h5><p class="card-text" style="color: #6e6e73;">A: ' + data.answer + '</p></div></div>';
+      }
+    });
+
+    // Alert/Notice component
+    CMS.registerEditorComponent({
+      id: "alert",
+      label: "Alert",
+      fields: [
+        { name: 'type', label: 'Type', widget: 'select', options: ['info', 'success', 'warning', 'danger'] },
+        { name: 'text', label: 'Text', widget: 'text' }
+      ],
+      pattern: /^{{< alert type="([^"]+)" text="([^"]+)" >}}$/,
+      fromBlock: function(match) {
+        return {
+          type: match[1],
+          text: match[2]
+        };
+      },
+      toBlock: function(data) {
+        return '{{< alert type="' + data.type + '" text="' + data.text + '" >}}';
+      },
+      toPreview: function(data) {
+        var colors = {
+          info: '#0dcaf0',
+          success: '#198754',
+          warning: '#ffc107',
+          danger: '#dc3545'
+        };
+        return '<div class="alert alert-' + data.type + ' mb-4" style="border-left: 4px solid ' + colors[data.type] + '; padding: 1rem; border-radius: 4px;">' + data.text + '</div>';
+      }
+    });
+
+    // Image with caption component
+    CMS.registerEditorComponent({
+      id: "figure",
+      label: "Image with Caption",
+      fields: [
+        { name: 'src', label: 'Image URL', widget: 'image' },
+        { name: 'alt', label: 'Alt Text', widget: 'string' },
+        { name: 'caption', label: 'Caption', widget: 'string', required: false }
+      ],
+      pattern: /^{{< figure src="([^"]+)" alt="([^"]+)"(?:\s+caption="([^"]+)")? >}}$/,
+      fromBlock: function(match) {
+        return {
+          src: match[1],
+          alt: match[2],
+          caption: match[3] || ''
+        };
+      },
+      toBlock: function(data) {
+        var result = '{{< figure src="' + data.src + '" alt="' + data.alt + '"';
+        if (data.caption) {
+          result += ' caption="' + data.caption + '"';
+        }
+        result += ' >}}';
+        return result;
+      },
+      toPreview: function(data) {
+        var html = '<figure class="mb-4" style="text-align: center;"><img src="' + data.src + '" alt="' + data.alt + '" style="max-width: 100%; height: auto; border-radius: 8px;">';
+        if (data.caption) {
+          html += '<figcaption style="margin-top: 0.5rem; color: #6e6e73; font-size: 0.9rem; font-style: italic;">' + data.caption + '</figcaption>';
+        }
+        html += '</figure>';
+        return html;
+      }
+    });
+  </script>
+
   <!-- Custom preview template -->
   <script>
+    // Initialize markdown-it
+    var md = window.markdownit({
+      html: true,
+      linkify: true,
+      typographer: true
+    });
+
+    // Helper function to process shortcodes and render markdown
+    function processShortcodesInPreview(markdownContent) {
+      if (!markdownContent) return '';
+      if (typeof markdownContent !== 'string') return '';
+
+      var processed = markdownContent;
+
+      // Process shortcodes BEFORE rendering markdown
+      // YouTube shortcode
+      processed = processed.replace(/{{<\s*youtube\s+(\S+)\s*>}}/g, function(match, input) {
+        var videoId = input.trim();
+
+        // Extract video ID from various YouTube URL formats
+        if (videoId.includes('youtube.com') || videoId.includes('youtu.be')) {
+          var youtuBeMatch = videoId.match(/youtu\.be\/([^\?&]+)/);
+          if (youtuBeMatch) {
+            videoId = youtuBeMatch[1];
+          } else {
+            var watchMatch = videoId.match(/[?&]v=([^&]+)/);
+            if (watchMatch) {
+              videoId = watchMatch[1];
+            } else {
+              var embedMatch = videoId.match(/\/embed\/([^\?&]+)/);
+              if (embedMatch) {
+                videoId = embedMatch[1];
+              }
+            }
+          }
+        }
+
+        videoId = videoId.split('?')[0].split('&')[0];
+
+        return '<div class="ratio ratio-16x9 mb-4"><iframe src="https://www.youtube.com/embed/' + videoId + '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+      });
+
+      // CTA shortcode
+      processed = processed.replace(/{{<\s*cta\s+title="([^"]+)"\s+text="([^"]+)"\s+buttonText="([^"]+)"\s+buttonUrl="([^"]+)"\s*>}}/g,
+        function(match, title, text, buttonText, buttonUrl) {
+          return '<div class="alert alert-primary mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 2rem; border-radius: 12px;"><h3 style="color: white; margin-bottom: 1rem;">' + title + '</h3><p style="margin-bottom: 1.5rem;">' + text + '</p><a href="' + buttonUrl + '" class="btn btn-light">' + buttonText + '</a></div>';
+        }
+      );
+
+      // FAQ shortcode
+      processed = processed.replace(/{{<\s*faq\s+question="([^"]+)"\s+answer="([^"]+)"\s*>}}/g,
+        function(match, question, answer) {
+          return '<div class="card mb-3" style="border: 1px solid #dee2e6; border-radius: 8px;"><div class="card-body"><h5 class="card-title" style="color: #0071e3; margin-bottom: 0.75rem;">Q: ' + question + '</h5><p class="card-text" style="color: #6e6e73;">A: ' + answer + '</p></div></div>';
+        }
+      );
+
+      // Alert shortcode
+      processed = processed.replace(/{{<\s*alert\s+type="([^"]+)"\s+text="([^"]+)"\s*>}}/g,
+        function(match, type, text) {
+          var colors = {
+            info: '#0dcaf0',
+            success: '#198754',
+            warning: '#ffc107',
+            danger: '#dc3545'
+          };
+          return '<div class="alert alert-' + type + ' mb-4" style="border-left: 4px solid ' + colors[type] + '; padding: 1rem; border-radius: 4px;">' + text + '</div>';
+        }
+      );
+
+      // Figure shortcode
+      processed = processed.replace(/{{<\s*figure\s+src="([^"]+)"\s+alt="([^"]+)"(?:\s+caption="([^"]+)")?\s*>}}/g,
+        function(match, src, alt, caption) {
+          var html = '<figure class="mb-4" style="text-align: center;"><img src="' + src + '" alt="' + alt + '" class="img-fluid" style="max-width: 100%; height: auto; border-radius: 8px;">';
+          if (caption) {
+            html += '<figcaption style="margin-top: 0.5rem; color: #6e6e73; font-size: 0.9rem; font-style: italic;">' + caption + '</figcaption>';
+          }
+          html += '</figure>';
+          return html;
+        }
+      );
+
+      // Now render the processed markdown to HTML
+      return md.render(processed);
+    }
+
     // Register custom preview template for articles
     CMS.registerPreviewTemplate('articles', createClass({
       render: function() {
         const entry = this.props.entry;
         const title = entry.getIn(['data', 'title']);
-        const body = entry.getIn(['data', 'body']);
+        const bodyRaw = entry.getIn(['data', 'body']);
         const customCode = entry.getIn(['data', 'customCode']);
         const tags = entry.getIn(['data', 'tags']);
         const author = entry.getIn(['data', 'author']);
         const date = entry.getIn(['data', 'date']);
         const description = entry.getIn(['data', 'description']);
         const image = entry.getIn(['data', 'image']);
+
+        // Process shortcodes in the raw markdown content
+        const bodyProcessed = processShortcodesInPreview(bodyRaw);
 
         return h('div', {className: 'article-preview', style: {padding: '2rem'}},
           // Tags
@@ -101,15 +390,18 @@
           }),
 
           // Body content (markdown widget already renders to HTML)
-          body && h('div', {
+          bodyProcessed && h('div', {
             className: 'prose',
             style: {
               lineHeight: '1.7',
               fontSize: '1.125rem',
               maxWidth: '65ch',
               marginBottom: '2rem'
+            },
+            dangerouslySetInnerHTML: {
+              __html: bodyProcessed
             }
-          }, this.props.widgetFor('body')),
+          }),
 
           // Custom HTML/JS code (rendered as HTML)
           customCode && h('div', {
@@ -133,9 +425,12 @@
       render: function() {
         const entry = this.props.entry;
         const title = entry.getIn(['data', 'title']);
-        const body = entry.getIn(['data', 'body']);
+        const bodyRaw = entry.getIn(['data', 'body']);
         const customCode = entry.getIn(['data', 'customCode']);
         const description = entry.getIn(['data', 'description']);
+
+        // Process shortcodes in the raw markdown content
+        const bodyProcessed = processShortcodesInPreview(bodyRaw);
 
         return h('div', {className: 'page-preview', style: {padding: '2rem'}},
           // Title
@@ -145,15 +440,18 @@
           description && h('p', {style: {fontSize: '1.125rem', color: '#6e6e73', marginBottom: '2rem'}}, description),
 
           // Body content (markdown widget already renders to HTML)
-          body && h('div', {
+          bodyProcessed && h('div', {
             className: 'prose',
             style: {
               lineHeight: '1.7',
               fontSize: '1.125rem',
               maxWidth: '65ch',
               marginBottom: '2rem'
+            },
+            dangerouslySetInnerHTML: {
+              __html: bodyProcessed
             }
-          }, this.props.widgetFor('body')),
+          }),
 
           // Custom HTML/JS code (rendered as HTML)
           customCode && h('div', {

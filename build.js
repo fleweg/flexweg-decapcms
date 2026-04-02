@@ -79,6 +79,111 @@ function transformImagesInHTML(html, imagesConfig) {
   });
 }
 
+/**
+ * Process shortcodes in content and convert them to HTML
+ * @param {string} content - Markdown content with shortcodes
+ * @returns {string} Content with shortcodes replaced by HTML
+ */
+function processShortcodes(content) {
+  let processed = content;
+
+  // YouTube shortcode: {{< youtube VIDEO_ID_OR_URL >}}
+  processed = processed.replace(/{{<\s*youtube\s+(\S+)\s*>}}/g, (match, input) => {
+    let videoId = input.trim();
+
+    // Extract video ID from various YouTube URL formats
+    if (videoId.includes('youtube.com') || videoId.includes('youtu.be')) {
+      // Handle youtu.be/VIDEO_ID format
+      const youtuBeMatch = videoId.match(/youtu\.be\/([^\?&]+)/);
+      if (youtuBeMatch) {
+        videoId = youtuBeMatch[1];
+      } else {
+        // Handle youtube.com/watch?v=VIDEO_ID format
+        const watchMatch = videoId.match(/[?&]v=([^&]+)/);
+        if (watchMatch) {
+          videoId = watchMatch[1];
+        } else {
+          // Handle youtube.com/embed/VIDEO_ID format
+          const embedMatch = videoId.match(/\/embed\/([^\?&]+)/);
+          if (embedMatch) {
+            videoId = embedMatch[1];
+          }
+        }
+      }
+    }
+
+    // Remove any query parameters (like ?si=...)
+    videoId = videoId.split('?')[0].split('&')[0];
+
+    return `<div class="ratio ratio-16x9 mb-4">
+  <iframe src="https://www.youtube.com/embed/${videoId}"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+  </iframe>
+</div>`;
+  });
+
+  // Call to Action shortcode: {{< cta title="..." text="..." buttonText="..." buttonUrl="..." >}}
+  processed = processed.replace(/{{<\s*cta\s+title="([^"]+)"\s+text="([^"]+)"\s+buttonText="([^"]+)"\s+buttonUrl="([^"]+)"\s*>}}/g,
+    (match, title, text, buttonText, buttonUrl) => {
+      return `<div class="alert alert-primary mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; color: white; padding: 2rem; border-radius: 12px;">
+  <h3 style="color: white; margin-bottom: 1rem;">${title}</h3>
+  <p style="margin-bottom: 1.5rem;">${text}</p>
+  <a href="${buttonUrl}" class="btn btn-light">${buttonText}</a>
+</div>`;
+    }
+  );
+
+  // FAQ shortcode: {{< faq question="..." answer="..." >}}
+  processed = processed.replace(/{{<\s*faq\s+question="([^"]+)"\s+answer="([^"]+)"\s*>}}/g,
+    (match, question, answer) => {
+      return `<div class="card mb-3" itemscope itemtype="https://schema.org/Question">
+  <div class="card-body">
+    <h5 class="card-title" style="color: #0071e3; margin-bottom: 0.75rem;" itemprop="name">Q: ${question}</h5>
+    <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+      <p class="card-text" style="color: #6e6e73;" itemprop="text">A: ${answer}</p>
+    </div>
+  </div>
+</div>`;
+    }
+  );
+
+  // Alert shortcode: {{< alert type="info|success|warning|danger" text="..." >}}
+  processed = processed.replace(/{{<\s*alert\s+type="([^"]+)"\s+text="([^"]+)"\s*>}}/g,
+    (match, type, text) => {
+      const colors = {
+        info: '#0dcaf0',
+        success: '#198754',
+        warning: '#ffc107',
+        danger: '#dc3545'
+      };
+      return `<div class="alert alert-${type} mb-4" style="border-left: 4px solid ${colors[type]}; padding: 1rem; border-radius: 4px;">
+  ${text}
+</div>`;
+    }
+  );
+
+  // Figure shortcode: {{< figure src="..." alt="..." caption="..." >}}
+  processed = processed.replace(/{{<\s*figure\s+src="([^"]+)"\s+alt="([^"]+)"(?:\s+caption="([^"]+)")?\s*>}}/g,
+    (match, src, alt, caption) => {
+      let html = `<figure class="mb-4" style="text-align: center;">
+  <img src="${src}" alt="${alt}" class="img-fluid" style="max-width: 100%; height: auto; border-radius: 8px;">`;
+
+      if (caption) {
+        html += `
+  <figcaption style="margin-top: 0.5rem; color: #6e6e73; font-size: 0.9rem; font-style: italic;">${caption}</figcaption>`;
+      }
+
+      html += `
+</figure>`;
+      return html;
+    }
+  );
+
+  return processed;
+}
+
 // Register Handlebars helpers
 function registerHelpers() {
   // Format date helper
@@ -146,7 +251,10 @@ function getArticles(imagesConfig) {
     const { data, content } = matter(fileContent);
 
     const slug = path.basename(file, '.md');
-    let htmlContent = md.render(content);
+
+    // Process shortcodes before rendering Markdown
+    const processedContent = processShortcodes(content);
+    let htmlContent = md.render(processedContent);
 
     // Transform image URLs in content from /media/ to /assets/img/ WebP
     htmlContent = transformImagesInHTML(htmlContent, imagesConfig);
@@ -163,6 +271,7 @@ function getArticles(imagesConfig) {
       image: imageObject,
       tags: data.tags || [],
       content: htmlContent,
+      customCode: data.customCode || '',
       excerpt: data.excerpt || content.substring(0, 200),
       url: `/articles/${slug}.html`
     };
@@ -273,7 +382,10 @@ function buildPages(config) {
         // Process markdown file
         const fileContent = fs.readFileSync(itemPath, 'utf8');
         const { data, content } = matter(fileContent);
-        let htmlContent = md.render(content);
+
+        // Process shortcodes before rendering Markdown
+        const processedContent = processShortcodes(content);
+        let htmlContent = md.render(processedContent);
 
         // Transform image URLs in content from /media/ to /assets/img/ WebP
         htmlContent = transformImagesInHTML(htmlContent, config.images);
@@ -294,7 +406,8 @@ function buildPages(config) {
           page: {
             title: data.title || 'Page',
             description: data.description || '',
-            content: htmlContent
+            content: htmlContent,
+            customCode: data.customCode || ''
           },
           currentUrl: pageUrl,
           pageTitle: `${data.title || 'Page'} - ${config.site.title}`

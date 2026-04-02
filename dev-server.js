@@ -134,6 +134,9 @@ app.use('/api/v1', (req, res) => {
 // Serve static files from public/ (for image previews in Decap CMS)
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Serve config files for admin panel (needed for CDN URLs)
+app.use('/config', express.static(path.join(__dirname, 'config')));
+
 // Serve admin panel
 app.use('/admin', express.static(path.join(__dirname, 'admin')));
 

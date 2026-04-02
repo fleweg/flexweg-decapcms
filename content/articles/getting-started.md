@@ -16,6 +16,16 @@ Static site generators have become increasingly popular in recent years, and for
 
 ## Why Static Sites?
 
+{{< youtube eok2xwvK4Mc >}}
+
+```css
+.toto {
+  backgound-color: #000;
+}
+```
+
+{{< cta title="r,ghrerhjor hjrpo" text="joopjrgejhgeghjpoe" buttonText="jthhjrhjoprhjr" buttonUrl="undefined" >}}
+
 Static sites offer several compelling advantages:
 
 ![](/media/20x30-pmge0005.jpeg)
