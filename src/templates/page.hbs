@@ -43,6 +43,13 @@
             <div class="prose">
               {{{page.content}}}
             </div>
+
+            {{#if page.customCode}}
+            <!-- Custom HTML/JS Code -->
+            <div class="custom-code mt-4">
+              {{{page.customCode}}}
+            </div>
+            {{/if}}
           </div>
         </div>
       </div>

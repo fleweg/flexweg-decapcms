@@ -107,6 +107,50 @@
         );
       }
     }));
+
+    // Register custom preview template for pages
+    CMS.registerPreviewTemplate('pages', createClass({
+      render: function() {
+        const entry = this.props.entry;
+        const title = entry.getIn(['data', 'title']);
+        const body = entry.getIn(['data', 'body']);
+        const customCode = entry.getIn(['data', 'customCode']);
+        const description = entry.getIn(['data', 'description']);
+
+        return h('div', {className: 'page-preview', style: {padding: '2rem'}},
+          // Title
+          h('h1', {style: {fontSize: '2.5rem', fontWeight: '700', marginBottom: '1rem'}}, title),
+
+          // Description
+          description && h('p', {style: {fontSize: '1.125rem', color: '#6e6e73', marginBottom: '2rem'}}, description),
+
+          // Body content (markdown widget already renders to HTML)
+          body && h('div', {
+            className: 'prose',
+            style: {
+              lineHeight: '1.7',
+              fontSize: '1.125rem',
+              maxWidth: '65ch',
+              marginBottom: '2rem'
+            }
+          }, this.props.widgetFor('body')),
+
+          // Custom HTML/JS code (rendered as HTML)
+          customCode && h('div', {
+            className: 'custom-code',
+            style: {
+              marginTop: '2rem',
+              padding: '1rem',
+              background: '#f5f5f7',
+              borderRadius: '8px'
+            },
+            dangerouslySetInnerHTML: {
+              __html: customCode
+            }
+          })
+        );
+      }
+    }));
   </script>
 </body>
 </html>
