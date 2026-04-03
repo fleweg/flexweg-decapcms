@@ -7,7 +7,7 @@ const BASE_URL = process.env.FLEXWEG_BASE_URL || 'http://static-host.local';
 const BUILD_DIR = './public'; // Adaptez selon votre projet
 
 // Rate limiting configuration
-const RATE_LIMIT_PER_MINUTE = 9; // Use 9 instead of 10 to be safe
+const RATE_LIMIT_PER_MINUTE = 50; // Use 9 instead of 10 to be safe
 const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute in milliseconds
 const MIN_REQUEST_INTERVAL_MS = 100; // Minimum delay between requests
 const MAX_RETRIES = 3; // Maximum number of retries for rate-limited requests
@@ -25,7 +25,8 @@ const ALLOWED_EXTENSIONS = [
   'html', 'css', 'js',
   'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'ico',
   'pdf', 'woff', 'woff2', 'ttf', 'otf',
-  'json', 'xml', 'txt'
+  'json', 'xml', 'txt',
+  'mp4', 'webm', 'ogg', 'mov' // Video formats
 ];
 
 // Extensions binaires nécessitant base64
@@ -33,6 +34,9 @@ const BINARY_EXTENSIONS = [
   'jpg', 'jpeg', 'png', 'gif', 'webp', 'ico',
   'pdf', 'woff', 'woff2', 'ttf', 'otf'
 ];
+
+// Extensions vidéo (utiliseront l'API /api/v1/videos/upload)
+const VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg', 'mov'];
 
 function isFileAllowed(filename) {
   const ext = path.extname(filename).toLowerCase().slice(1);
@@ -42,6 +46,11 @@ function isFileAllowed(filename) {
 function isBinaryFile(filename) {
   const ext = path.extname(filename).toLowerCase().slice(1);
   return BINARY_EXTENSIONS.includes(ext);
+}
+
+function isVideoFile(filename) {
+  const ext = path.extname(filename).toLowerCase().slice(1);
+  return VIDEO_EXTENSIONS.includes(ext);
 }
 
 /**
@@ -86,7 +95,61 @@ async function enforceRateLimit() {
   lastRequestTime = finalNow;
 }
 
+async function uploadVideo(filePath, fullPath, retryCount = 0) {
+  try {
+    // Enforce rate limiting before making the request
+    await enforceRateLimit();
+
+    const FormData = require('form-data');
+    const formData = new FormData();
+
+    // Add file as stream
+    formData.append('file', fs.createReadStream(fullPath));
+    formData.append('path', filePath);
+
+    const response = await axios.post(
+      `${BASE_URL}/api/v1/videos/upload`,
+      formData,
+      {
+        headers: {
+          'X-API-Key': API_KEY,
+          ...formData.getHeaders()
+        },
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      }
+    );
+
+    const sizeMB = (response.data.size / (1024 * 1024)).toFixed(2);
+    console.log(`✓ ${filePath} (${sizeMB} MB) [VIDEO]`);
+    return response.data;
+  } catch (error) {
+    const errorMsg = error.response?.data?.message || error.message;
+    const isRateLimitError = error.response?.status === 429 || errorMsg.includes('Rate limit');
+
+    // Retry logic for rate limit errors
+    if (isRateLimitError && retryCount < MAX_RETRIES) {
+      const waitTime = RATE_LIMIT_WINDOW_MS + 1000;
+      const seconds = (waitTime / 1000).toFixed(1);
+      console.log(`⏳ Rate limit hit for ${filePath}, waiting ${seconds}s before retry ${retryCount + 1}/${MAX_RETRIES}...`);
+
+      requestTimestamps = [];
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+      return uploadVideo(filePath, fullPath, retryCount + 1);
+    }
+
+    console.error(`✗ ${filePath}: ${errorMsg}`);
+    uploadErrors.push({ file: filePath, error: errorMsg });
+    return null;
+  }
+}
+
 async function uploadFile(filePath, fullPath, retryCount = 0) {
+  // Use dedicated video upload API for video files
+  if (isVideoFile(filePath)) {
+    return uploadVideo(filePath, fullPath, retryCount);
+  }
+
   try {
     // Enforce rate limiting before making the request
     await enforceRateLimit();
